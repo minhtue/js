@@ -20,6 +20,51 @@ jQuery.extend({
    return result;
   }
 });
+var tools = {
+  container: $('#editorjs'),
+  render: function(item){
+    if(item.type !== undefined){
+      this[item.type](item);
+    }
+  },
+  header: function(item){
+    const header = `<div class="ce-block"><div class="ce-block__content"><h${item.data.level} class="ce-header">${item.data.text}</h${item.data.level}></div></div>`;
+    var target = $(header);
+    this.container.append(target);
+  },
+  paragraph: function(item){
+    const paragraph = `<div class="ce-block"><div class="footnotes-outer"><div class="ce-block__content"><div class="ce-paragraph cdx-block">${item.data.text}</div></div><div class="footnotes-container" ></div></div></div>`;
+    var target = $(paragraph);
+    this.container.append(target);
+    this.tunes(item.tunes, target)
+  },
+  list: function(item){
+    const list = `<div class="ce-block"><div class="footnotes-outer"><div class="ce-block__content"><${item.data.style === 'unordered' ? 'u' : 'o'}l class="cdx-block cdx-list cdx-list--${item.data.style}">${item.data.items ? `${item.data.items.map(li => `<li class="cdx-list__item">${li}</li>`).join('')}` : ''}</<${item.data.style === 'unordered' ? 'u' : 'o'}l></div><div class="footnotes-container"></div></div></div>`;
+    var target = $(list);
+    this.container.append(target);
+    this.tunes(item.tunes, target)
+  },
+  delimiter: function(item){
+    this.container.append('<div class="ce-block"><div class="ce-block__content"><div class="ce-delimiter cdx-block"></div></div></div>');
+  },
+  image: function(item){
+    const image = `<div class="ce-block"><div class="ce-block__content"><div class="cdx-block image-tool ${item.data.withBorder ? 'image-tool--withBorder' : ''} ${item.data.stretched ? 'image-tool--stretched' : ''} ${item.data.withBackground ? 'image-tool--withBackground' : ''} image-tool--filled"><div class="image-tool__image"><div class="image-tool__image-preloader"></div><img class="image-tool__image-picture" src="${item.data.file.url}"></div><div class="cdx-input image-tool__caption">${item.data.caption}</div></div></div></div>`;
+    var target = $(image);
+    this.container.append(target);
+  },
+	
+  tunes: function(item, con){
+    if(item !== undefined && item.footnotes !== undefined && item.footnotes.length > 0){
+      $(con).on('click', 'sup[data-tune=footnotes]', function(){
+        var i = parseInt($(this).text());
+      	if(i > item.footnotes.length){
+      	  return false;
+      	}
+      	console.log('Show FOOTNOTES', item.footnotes[i-1]);
+      });
+    }
+  }
+};
 $(document).ready(function(){
   //load data
   var settings = $.getValues('/settings.json');
@@ -64,29 +109,29 @@ function getSlug(data){
 }
 
 function menu(data){
-	if(data === undefined || data === ''){
-		return;
-	}
-	const markup = `
-		${data.map(item => `
-			<li class="ce-cat">
-			<div><strong>${item.title}</strong></div>
-			<ul id="${item.refId}">
-				${item.items ? `${item.items.map(link => `
-					<li class="ce-link">
-						<a class="link"><div>${link.title}</div></a>
-					</li>
-				`).join('')}` : ''}
-			</ul>
-			</li>
-		`).join('')}
-	`;
-	$('#links').append(markup);
+  if(data === undefined || data === ''){
+    return;
+  }
+  const markup = `
+    ${data.map(item => `
+      <li class="ce-cat">
+        <div><strong>${item.title}</strong></div>
+        <ul id="${item.refId}">
+          ${item.items ? `${item.items.map(link => `
+            <li class="ce-link"><a class="link"><div>${link.title}</div></a></li>
+          `).join('')}` : ''}
+        </ul>
+      </li>
+    `).join('')}
+  `;
+  $('#links').append(markup);
 }
 function header(data){
   //render main menu
   //change css variable
 }
 function content(data){
-  //render content
+  $.each(data, function(i, item){
+    tools.render(item);
+  })
 }
