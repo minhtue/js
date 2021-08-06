@@ -52,6 +52,20 @@ var tools = {
     var target = $(image);
     this.container.append(target);
   },
+  attaches: function(item){
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    var bytes = item.data.file.size;
+    if (bytes === 0){
+      item.data.num = 0;
+      item.data.label = 'byte';
+    }
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    item.data.num = Math.round(bytes / Math.pow(1024, i), 2);
+    item.data.label = sizes[i];
+    var attaches = `<div class="ce-block"><div class="ce-block__content"><div class="cdx-block"><div class="cdx-attaches cdx-attaches--with-file"><div class="cdx-attaches__file-icon" data-extension="${item.data.file.extension}" style="color: rgb(246, 118, 118);"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="40"><path d="M17 0l15 14V3v34a3 3 0 0 1-3 3H3a3 3 0 0 1-3-3V3a3 3 0 0 1 3-3h20-6zm0 2H3a1 1 0 0 0-1 1v34a1 1 0 0 0 1 1h26a1 1 0 0 0 1-1V14H17V2zm2 10h7.926L19 4.602V12z"></path></svg></div><div class="cdx-attaches__file-info"><div class="cdx-attaches__title">${item.data.title}</div><div class="cdx-attaches__size" data-size="${item.data.label}">${item.data.num}</div></div><a class="cdx-attaches__download-button" href="${item.data.file.url}" target="_blank" download="${item.data.title}" rel="nofollow noindex noreferrer"><i class="fas fa-download"></i></a></div></div></div></div>`;
+    var target = $(attaches);
+    this.container.append(target);
+  },
 	
   tunes: function(item, con){
     if(item !== undefined && item.footnotes !== undefined && item.footnotes.length > 0){
