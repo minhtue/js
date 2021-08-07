@@ -66,6 +66,41 @@ var tools = {
     var target = $(attaches);
     this.container.append(target);
   },
+  embed: function(item){
+    const embed = `<div class="ce-block"><div class="ce-block__content"><div class="cdx-block embed-tool"><preloader class="embed-tool__preloader"><div class="embed-tool__url">${item.data.source}</div></preloader><iframe style="width:100%;" height="${item.data.height > 400 ? `${item.data.height}`: '450'}" frameborder="0" allowfullscreen src="${item.data.embed}" class="embed-tool__content"></iframe><div class="cdx-input embed-tool__caption" contenteditable="false" data-placeholder="Enter a caption">${item.data.caption}</div></div></div></div>`;
+    var target = $(embed);
+    this.container.append(target);
+  },
+  personality: function(item){
+    const personality = `<div class="ce-block"><div class="ce-block__content"><div class="cdx-personality"><div class="cdx-personality__photo" style="background: url(&quot;${item.data.photo}&quot;) center center / cover no-repeat;"></div><div class="cdx-personality__name" contenteditable="false">${item.data.name}</div><div class="cdx-personality__description" contenteditable="false">${item.data.description}</div><div class="cdx-personality__link" contenteditable="false"><a href="${item.data.link}" target="_blank">${item.data.link}</a></div></div></div></div>`;
+    var target = $(personality);
+    this.container.append(target);
+  },
+  quote: function(item){
+    const quote = `<div class="ce-block"><div class="ce-block__content"><blockquote class="cdx-block cdx-quote"><div class="cdx-input cdx-quote__text" data-placeholder="Enter a quote">${item.data.text}</div><div class="cdx-input cdx-quote__caption" contenteditable="true" data-placeholder="Quote's author">${item.data.caption}</div></blockquote></div></div>`;
+    var target = $(quote);
+    this.container.append(target);
+  },
+  checklist: function(item){
+    const checklist = `<div class="ce-block"><div class="ce-block__content"><div class="cdx-block cdx-checklist">${item.data.items.map(li => `<div class="cdx-checklist__item${li.checked ? ' cdx-checklist__item--checked':''}"><span class="cdx-checklist__item-checkbox"></span><div class="cdx-checklist__item-text">${li.text}</div></div>`).join('')}</div></div></div>`;
+    var target = $(checklist);
+    this.container.append(target);
+  },
+  code: function(item){
+    const code = `<div class="ce-block"><div class="ce-block__content"><div class="cdx-block ce-code"><textarea class="ce-code__textarea cdx-input" placeholder="Enter a code" disabled>${item.data.code}</textarea></div></div></div>`;
+    var target = $(code);
+    this.container.append(target);
+  },
+  alert: function(item){
+    const html = `<div class="ce-block"><div class="ce-block__content"><div class="cdx-alert cdx-alert-${item.data.type}"><div class="cdx-alert__message">${item.data.text}</div></div></div></div>`;
+    var target = $(html);
+    this.container.append(target);
+  },
+  table: function(item){
+    const html = `<div class="ce-block"><div class="ce-block__content"><div class="cdx-block"><div class="tc-wrap tc-wrap--readonly"><div class="tc-table ${item.data.withHeadings ? 'tc-table--heading':''}">${item.data.content.map(row => `<div class="tc-row">${row.map(cell => `<div class="tc-cell">${cell}</div>`).join('')}</div>`).join('')}</div></div></div></div></div>`;
+    var target = $(html);
+    this.container.append(target);
+  },
 	
   tunes: function(item, con){
     if(item !== undefined && item.footnotes !== undefined && item.footnotes.length > 0){
@@ -77,7 +112,7 @@ var tools = {
       	console.log('Show FOOTNOTES', item.footnotes[i-1]);
       });
     }
-  }
+  },
 };
 $(document).ready(function(){
   //load data
